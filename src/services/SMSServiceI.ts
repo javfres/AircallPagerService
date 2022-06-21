@@ -7,6 +7,6 @@ export default interface SMSServiceI {
         target: Target,
         service: MonitoredService,
         msg: string,
-    ): void;
+    ): Promise<void>;
 
 }

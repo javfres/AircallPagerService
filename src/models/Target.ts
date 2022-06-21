@@ -1,5 +1,5 @@
+import { MonitoredService } from "./MonitoredService";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Target {
-
+    notify(service: MonitoredService, msg: string): Promise<void>;
 }

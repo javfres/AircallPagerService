@@ -1,6 +1,6 @@
 
 export default interface TimeServiceI {
 
-    addTimeout(msId: string): void;
+    addTimeout(msId: string, minutes: number): Promise<void>;
 
 }
