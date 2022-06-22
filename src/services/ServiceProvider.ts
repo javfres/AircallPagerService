@@ -4,7 +4,20 @@ import MonitoredServiceRepositoryI from "./MonitoredServiceRepositoryI";
 import SMSServiceI from "./SMSServiceI";
 import TimeServiceI from "./TimeServiceI";
 
+type EscalationServiceT = 'escalation';
+type MailServiceT = 'mail';
+type MonitoredServiceRepositoryT = 'repository';
+type SMSServiceT = 'sms';
+type TimeServiceT = 'time';
+
 type ServiceT =
+    EscalationServiceT |
+    MailServiceT |
+    MonitoredServiceRepositoryT |
+    SMSServiceT |
+    TimeServiceT;
+
+type ServiceI =
     EscalationServiceI |
     MailServiceI |
     MonitoredServiceRepositoryI |
@@ -17,20 +30,36 @@ type ServiceT =
  */
 export class ServiceProvider {
 
-    private static services: Record<string, ServiceT> =  {};
+    private static services: Partial<Record<ServiceT, ServiceI>> = {};
 
-    public static register(name: string, service: ServiceT) {
-
+    /**
+     * Register a service
+     * @param name The name of the service
+     * @param service The service implementation class
+     */
+    public static register(name: ServiceT, service: ServiceI) {
         this.services[name] = service;
     }
 
-    public static get(name: string): ServiceT {
+    public static get(name: EscalationServiceT): EscalationServiceI;
+    public static get(name: MailServiceT): MailServiceI;
+    public static get(name: MonitoredServiceRepositoryT): MonitoredServiceRepositoryI;
+    public static get(name: SMSServiceT): SMSServiceI;
+    public static get(name: TimeServiceT): TimeServiceI;
 
-        if(!this.services[name]) {
+    /**
+     * Get a service
+     * @param name The name of the service
+     * @returns The service implementation class
+     */
+    public static get(name: ServiceT): ServiceI {
+
+        const service = this.services[name];
+
+        if(!service) {
             throw new Error(`Implementation for ${name} has not been registered`);
         }
 
-        return this.services[name];
+        return service;
     }
-
 }

@@ -4,7 +4,8 @@
   "description": "Aircall Pager Service",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testSingle": "jest -i tests/uc5.test.ts"
   },
   "author": "Javier Fresno",
   "license": "ISC",

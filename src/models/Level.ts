@@ -1,5 +1,8 @@
 import { Target } from "./Target";
 
+/**
+ * A level of a Escalation policy with the targets to notify
+ */
 export class Level {
 
     level: number;

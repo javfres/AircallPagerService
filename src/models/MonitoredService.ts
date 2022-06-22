@@ -32,6 +32,24 @@ export class MonitoredService {
     }
 
 
+    markUnHealthy(msg: string) {
+        this.status = 'unhealthy';
+        this.currentLevel = 0;
+        this.alertMsg = msg;
+        this.acknowledged = false;
+    }
+
+    markHealthy() {
+        this.status = 'healthy';
+        this.currentLevel = 0;
+        this.alertMsg = '';
+        this.acknowledged = false;
+    }
+
+    markAcknowledged() {
+        this.acknowledged = true;
+    }
+
     async notify(): Promise<void> {
         
         if (!this.policy) {
@@ -41,14 +59,23 @@ export class MonitoredService {
         const targets = this.policy.levels[this.currentLevel].targets;
 
         for(const target of targets) {
-            console.log("notify target", target);
             await target.notify(this, this.alertMsg);
         }
 
     }
 
-    escalate(): void {
-        
+    escalate(): boolean {
+
+        if (!this.policy) {
+            throw new Error("Policy was not loaded");
+        }
+
+        if(this.currentLevel === this.policy.levels.length-1) {
+            return false;
+        }
+
+        this.currentLevel++;
+        return true;
     }
 
 }

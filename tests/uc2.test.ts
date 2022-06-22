@@ -1,4 +1,4 @@
-import { AlertingController } from "../src/controllers/AlertingController";
+import { TimeController } from "../src/controllers/TimeController";
 import { EscalationPolicy } from "../src/models/EscalationPolicy";
 import { Level } from "../src/models/Level";
 import { MailTarget } from "../src/models/MailTarget";
@@ -9,6 +9,7 @@ import { ServiceProvider } from "../src/services/ServiceProvider";
 // Create mock services
 //
 const mService = new MonitoredService('server-123');
+mService.status = 'unhealthy';
 
 const repositoryMock = {
     get: jest.fn().mockReturnValueOnce(mService),
@@ -21,6 +22,9 @@ const escalationMock = {
             new Level(0, [
                 new MailTarget('demoA@aircall.com'),
                 new MailTarget('demoB@aircall.com'),
+            ]),
+            new Level(1, [
+                new MailTarget('boss@aircall.com'),
             ]),
         ]);
     })()),
@@ -45,19 +49,19 @@ beforeAll(() => {
 });
 
 //
-// Test UC-1
+// Test UC-2
 //
-test('Use Case 1', async () => {
+test('Use Case 2', async () => {
 
-    const controller = new AlertingController();
+    const controller = new TimeController();
 
-    await controller.alert('server-123', 'Server is down');
+    await controller.timeout('server-123');
 
-    expect(mService.alertMsg).not.toBe("");
     expect(mService.status).toBe("unhealthy");
-    
+    expect(mService.currentLevel).toBe(1);
+
     expect(repositoryMock.get.mock.calls.length).toBe(1);
     expect(repositoryMock.save.mock.calls.length).toBe(1);
-    expect(mailMock.notify.mock.calls.length).toBe(2);
+    expect(mailMock.notify.mock.calls.length).toBe(1);
     expect(timeMock.addTimeout.mock.calls.length).toBe(1);
 });
