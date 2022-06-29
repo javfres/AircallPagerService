@@ -50,11 +50,22 @@ export class MonitoredService {
         this.acknowledged = true;
     }
 
+    /*
+    get myPolicy(): Promise<> {
+
+        if (!this.policy) {
+            
+
+
+        }
+        
+        return this.loadPolicy;
+    }
+    */
+
+
     async notify(): Promise<void> {
         
-        if (!this.policy) {
-            throw new Error("Policy was not loaded");
-        }
 
         const targets = this.policy.levels[this.currentLevel].targets;
 

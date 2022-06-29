@@ -1,6 +1,6 @@
 import { ServiceProvider } from "../services/ServiceProvider";
 
-export class AlertingController {
+export class AlertingController /*extends Controller*/ {
 
     /**
      * Process an alert
@@ -32,13 +32,13 @@ export class AlertingController {
 
         // Mark as unhealthy and save it
         service.markUnHealthy(msg);
-        repository.save(service);
+        await repository.save(service);
 
         // Notify the current alert level
         await service.notify();
 
         // Add a timeout
         const time = ServiceProvider.get('time');
-        time.addTimeout(msId, 15);
+        time.addTimeout(msId, 20);
     }
 }

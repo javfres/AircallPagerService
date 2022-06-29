@@ -3,6 +3,8 @@ import { EscalationPolicy } from "../src/models/EscalationPolicy";
 import { Level } from "../src/models/Level";
 import { MailTarget } from "../src/models/MailTarget";
 import { MonitoredService } from "../src/models/MonitoredService";
+import SMSTarget from "../src/models/SMSTarget";
+import { WorkingHours } from "../src/models/Target";
 import { ServiceProvider } from "../src/services/ServiceProvider";
 
 //
@@ -15,12 +17,24 @@ const repositoryMock = {
     save: jest.fn(),
 }
 
+const workingHoursMock = {
+    isWorking: () => true,
+}
+
+/*
+class WorkingHoursFalse extends WorkingHours {
+    isWorking(current?: Date): boolean {
+        return false;
+    }
+}
+*/
+
 const escalationMock = {
     get: jest.fn().mockReturnValueOnce((() => {
         return new EscalationPolicy([
             new Level(0, [
-                new MailTarget('demoA@aircall.com'),
-                new MailTarget('demoB@aircall.com'),
+                new MailTarget('demoA@aircall.com', new WorkingHours(9,18)),
+                new SMSTarget('+34 55 22 32', workingHoursMock),
             ]),
         ]);
     })()),
@@ -29,6 +43,11 @@ const escalationMock = {
 const mailMock = {
     notify: jest.fn(),
 };
+
+const smsMock = {
+    notify: jest.fn(),
+};
+
 
 const timeMock = {
     addTimeout: jest.fn(),
@@ -42,6 +61,7 @@ beforeAll(() => {
     ServiceProvider.register('escalation', escalationMock);
     ServiceProvider.register('mail', mailMock);
     ServiceProvider.register('time', timeMock);
+    ServiceProvider.register('sms', smsMock);
 });
 
 //
@@ -58,6 +78,12 @@ test('Use Case 1', async () => {
     
     expect(repositoryMock.get.mock.calls.length).toBe(1);
     expect(repositoryMock.save.mock.calls.length).toBe(1);
-    expect(mailMock.notify.mock.calls.length).toBe(2);
+
+
+    expect(mailMock.notify.mock.calls.length).toBe(1);
+    expect(smsMock.notify.mock.calls.length).toBe(1);
+
+
+
     expect(timeMock.addTimeout.mock.calls.length).toBe(1);
 });

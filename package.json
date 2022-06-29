@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "testSingle": "jest -i tests/uc5.test.ts"
+    "testSingle": "jest -i tests/uc1.test.ts"
   },
   "author": "Javier Fresno",
   "license": "ISC",
